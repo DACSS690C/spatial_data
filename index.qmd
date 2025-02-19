@@ -1,0 +1,59 @@
+---
+title: "plot-HW1"
+author: "Kai Holl"
+---
+
+```{r}
+library(sf)
+library(ggplot2)
+```
+
+Let me get the files we created in Python:
+
+```{r}
+rm(list = ls())
+```
+
+```{r}
+link <- 'https://github.com/DACSS690C/spatial_data/raw/refs/heads/main/countriesCIA.gpkg'
+# mapLink=paste0(mainLink,'maps/countriesCIA.gpkg')
+
+countriesCIA <- read_sf(link, layer='cia')
+worldBorders <-  read_sf(link, layer='border')
+```
+
+See variables:
+
+```{r}
+names(countriesCIA)
+```
+```{r}
+head(countriesCIA)
+```
+
+
+Now to create the non-interactive map!
+
+
+```{r}
+best_countries <- subset(countriesCIA, best_country == 1)
+```
+
+```{r}
+base=ggplot(data = worldBorders)+geom_sf(fill='grey',color=NA) + theme_linedraw()
+```
+
+```{r}
+maskToClip=as.vector(st_bbox(best_countries))
+
+base + geom_sf(data=best_countries,fill='yellow') + 
+  coord_sf(xlim = c(maskToClip[1],maskToClip[3]), 
+           ylim = c(maskToClip[2],maskToClip[4])) +
+    geom_sf_text(data=best_countries,
+                 aes(label=COUNTRY),
+                 color='blue',
+                 check_overlap = T,
+                 size=3,
+                 nudge_y = 0.15)
+```
+
