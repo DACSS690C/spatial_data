@@ -31,9 +31,7 @@ names(countriesCIA)
 head(countriesCIA)
 ```
 
-
 Now to create the non-interactive map!
-
 
 ```{r}
 best_countries <- subset(countriesCIA, best_country == 1)
